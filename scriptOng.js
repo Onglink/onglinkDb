@@ -1,35 +1,35 @@
 //estrutura de cadastro para ong
 // {
-//   RazaoSocial: "Associação Amigos da Natureza",
-//   NomeFantasia: "Amigos da Natureza",
-//   CNPJ: "12.345.678/0001-99",
-//   CPF: "123.456.789-00",
-//   RepLegal: "Maria Silva",
-//   Telefone: "(11) 91234-5678",
-//   Email: "contato@amigosnatureza.org",
-//   Endereco: {
-//     NumeroEnd: "123",
-//     Complemento: "Sala 4",
-//     Bairro: "Centro",
-//     Cidade: "Sorocaba",
-//     Estado: "SP",
-//     CEP: "18000-000",
-//     Rua: "Rua das Árvores"
+//   "RazaoSocial": "Nova ONG",
+//   "NomeFantasia": "Amigos do Brasil sqn",
+//   "CNPJ": "98.765.432/0001-99",
+//   "CPF": "987.654.321-00",
+//   "RepLegal": "Arnold Schwarzenegger",
+//   "Telefone": "(99) 99887-6542",
+//   "Email": "contato@ongdogoverno.gov",
+//   "Endereco": {
+//     "NumeroEnd": "10",
+//     "Complemento": "palácio do planalto",
+//     "Bairro": "Centro",
+//     "Cidade": "Brasilia",
+//     "Estado": "DF",
+//     "CEP": "18000-171",
+//     "Rua": "Rua da toga"
 //   },
-//   Logo: "https://exemplo.com/logo.png",
-//   Descricao: "ONG voltada à preservação ambiental e educação ecológica.",
-//   DataFund: new Date("2010-05-15"),
-//   CausaSocial: ["Meio Ambiente", "Educação"],
-//   RedeSocial: {
-//     Instagram: "@amigosnatureza",
-//     Facebook: "fb.com/amigosnatureza",
-//     Site: "https://amigosnatureza.org"
+//   "Logo": "https://exemplo.com/logo.png",
+//   "Descricao": "ONG voltada à arrecadação de fundos",
+//   "DataFund": "1500-04-15",
+//   "CausaSocial": "Saúde",
+//   "RedeSocial": {
+//     "Instagram": "@amigosdobrasilsqn",
+//     "Facebook": "fb.com/amigosdobrasilsqn",
+//     "Site": "https://amigosdobrasilsqn.org"
 //   },
-//   ArquivosLegais: [
+//   "ArquivosLegais": [
 //     "https://exemplo.com/documentos/estatuto.pdf",
 //     "https://exemplo.com/documentos/ata_fundacao.pdf"
 //   ],
-//   Imagens: [
+//   "Imagens": [
 //     "https://exemplo.com/imagens/acao1.jpg",
 //     "https://exemplo.com/imagens/evento2.jpg"
 //   ]

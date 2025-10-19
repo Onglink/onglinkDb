@@ -30,6 +30,28 @@ async function listarOngs(req, res) {
   }
 }
 
+async function buscarOngPorId (req, res) {
+  try {
+    await client.connect();
+    const db = client.db('onglinkDb');
+    const ongs = db.collection('ongs');
+    const { id } = req.params;
+
+    const ong = await ongs.findOne({ _id: new ObjectId(id) });
+
+    if (!ong) {
+      return res.status(404).json({ error: 'ONG não encontrada' });
+    }
+
+    res.status(200).json(ong);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao buscar ONG', details: err });
+  } finally {
+    await client.close();
+  }
+}
+
+
 async function atualizarOng(req, res) {
   try {
     await client.connect();
@@ -67,5 +89,6 @@ module.exports = {
   cadastrarOng,
   listarOngs,
   atualizarOng,
-  deletarOng
+  deletarOng,
+  buscarOngPorId
 };
