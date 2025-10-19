@@ -65,7 +65,7 @@ async function run() {
       Logo: "https://exemplo.com/logo.png",
       Descricao: "ONG voltada à preservação ambiental e educação ecológica.",
       DataFund: new Date("2010-05-15"),
-      CausaSocial: ["Meio Ambiente", "Educação"],
+      CausaSocial: "Meio Ambiente",
       RedeSocial: {
         Instagram: "@amigosnatureza",
         Facebook: "fb.com/amigosnatureza",
