@@ -43,44 +43,86 @@ async function run() {
   try {
     await client.connect();
     const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
 
-    const novaOng = {
-      RazaoSocial: "Associação Amigos da Natureza",
-      NomeFantasia: "Amigos da Natureza",
-      CNPJ: "12.345.678/0001-99",
-      CPF: "123.456.789-00",
-      RepLegal: "Maria Silva",
-      Telefone: "(11) 91234-5678",
-      Email: "contato@amigosnatureza.org",
-      Endereco: {
-        NumeroEnd: "123",
-        Complemento: "Sala 4",
-        Bairro: "Centro",
-        Cidade: "Sorocaba",
-        Estado: "SP",
-        CEP: "18000-000",
-        Rua: "Rua das Árvores"
-      },
-      Logo: "https://exemplo.com/logo.png",
-      Descricao: "ONG voltada à preservação ambiental e educação ecológica.",
-      DataFund: new Date("2010-05-15"),
-      CausaSocial: "Meio Ambiente",
-      RedeSocial: {
-        Instagram: "@amigosnatureza",
-        Facebook: "fb.com/amigosnatureza",
-        Site: "https://amigosnatureza.org"
-      },
-      ArquivosLegais: [
-        "https://exemplo.com/documentos/estatuto.pdf",
-        "https://exemplo.com/documentos/ata_fundacao.pdf"
-      ],
-      Imagens: [
-        "https://exemplo.com/imagens/acao1.jpg",
-        "https://exemplo.com/imagens/evento2.jpg"
-      ]
-    };
+    // Aplica o schema de validação à collection existente
+    await db.command({
+      collMod: 'ongs',
+      validator: {
+        $jsonSchema: {
+          bsonType: 'object',
+          required: [
+            'razaoSocial', 'nomeFantasia', 'cnpj', 'cpf', 'repLegal',
+            'telefone', 'email', 'endereco', 'logo', 'descricao',
+            'dataFund', 'causaSocial', 'redeSocial', 'arquivosLegais', 'imagens','usuario'
+          ],
+          properties: {
+            razaoSocial: { bsonType: 'string' },
+            nomeFantasia: { bsonType: 'string' },
+            cnpj: { bsonType: 'string' },
+            cpf: { bsonType: 'string' },
+            repLegal: { bsonType: 'string' },
+            telefone: { bsonType: 'string' },
+            email: { bsonType: 'string' },
+            endereco: {
+              bsonType: 'object',
+              required: ['numeroEnd', 'complemento', 'bairro', 'cidade', 'estado', 'cep', 'rua'],
+              properties: {
+                numeroEnd: { bsonType: 'string' },
+                complemento: { bsonType: 'string' },
+                bairro: { bsonType: 'string' },
+                cidade: { bsonType: 'string' },
+                estado: {
+                  bsonType: 'string',
+                  enum: ['SP', 'RJ', 'MG', 'AC'] // ajuste conforme necessário
+                },
+                cep: { bsonType: 'string' },
+                rua: { bsonType: 'string' }
+              }
+            },
+            logo: { bsonType: 'string' },
+            descricao: { bsonType: 'string' },
+            dataFund: { bsonType: 'date' },
+            causaSocial: { bsonType: 'string' },
+            redeSocial: {
+              bsonType: 'object',
+              required: ['instagram', 'facebook', 'site'],
+              properties: {
+                instagram: { bsonType: 'string' },
+                facebook: { bsonType: 'string' },
+                site: { bsonType: 'string' }
+              }
+            },
+            arquivosLegais: {
+              bsonType: 'array',
+              items: { bsonType: 'string' }
+            },
+            imagens: {
+              bsonType: 'array',
+              items: { bsonType: 'string' }
+            },
+            usuario: {
+              bsonType: 'object',
+              required: [''],
+              properties: {
+                nome: { bsonType: 'string' },
+                
+                status: {
+                  bsonType: 'string',
+                  enum: ['ong','user','admin'] // ajuste conforme necessário
+                },
+               
+              }
+            },
 
+          }
+        }
+      },
+      validationLevel: 'strict',
+      validationAction: 'error'
+    });
+
+    // Agora insere a ONG normalmente
+    
     const resultado = await ongs.insertOne(novaOng);
     console.log('✅ ONG cadastrada com sucesso:', resultado.insertedId);
   } catch (err) {
