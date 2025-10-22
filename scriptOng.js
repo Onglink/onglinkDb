@@ -1,124 +1,44 @@
 //estrutura de cadastro para ong
 // {
-//   "RazaoSocial": "Nova ONG",
-//   "NomeFantasia": "Amigos do Brasil sqn",
-//   "CNPJ": "98.765.432/0001-99",
-//   "CPF": "987.654.321-00",
-//   "RepLegal": "Arnold Schwarzenegger",
-//   "Telefone": "(99) 99887-6542",
-//   "Email": "contato@ongdogoverno.gov",
-//   "Endereco": {
-//     "NumeroEnd": "10",
-//     "Complemento": "palácio do planalto",
-//     "Bairro": "Centro",
-//     "Cidade": "Brasilia",
-//     "Estado": "DF",
-//     "CEP": "18000-171",
-//     "Rua": "Rua da toga"
-//   },
-//   "Logo": "https://exemplo.com/logo.png",
-//   "Descricao": "ONG voltada à arrecadação de fundos",
-//   "DataFund": "1500-04-15",
-//   "CausaSocial": "Saúde",
-//   "RedeSocial": {
-//     "Instagram": "@amigosdobrasilsqn",
-//     "Facebook": "fb.com/amigosdobrasilsqn",
-//     "Site": "https://amigosdobrasilsqn.org"
-//   },
-//   "ArquivosLegais": [
-//     "https://exemplo.com/documentos/estatuto.pdf",
-//     "https://exemplo.com/documentos/ata_fundacao.pdf"
-//   ],
-//   "Imagens": [
-//     "https://exemplo.com/imagens/acao1.jpg",
-//     "https://exemplo.com/imagens/evento2.jpg"
-//   ]
-// }
-const { MongoClient } = require('mongodb');
-
-const uri = 'mongodb+srv://rafael_sartori:onglink_fatec@onglinkdb.9kxqdci.mongodb.net/?retryWrites=true&w=majority';
-const client = new MongoClient(uri);
-
-async function run() {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-
-    // Aplica o schema de validação à collection existente
-    await db.command({
-      collMod: 'ongs',
-      validator: {
-        $jsonSchema: {
-          bsonType: 'object',
-          required: [
-            'razaoSocial', 'nomeFantasia', 'cnpj', 'cpf', 'repLegal',
-            'telefone', 'email', 'endereco', 'logo', 'descricao',
-            'dataFund', 'causaSocial', 'redeSocial', 'arquivosLegais', 'imagens'
-          ],
-          properties: {
-            razaoSocial: { bsonType: 'string' },
-            nomeFantasia: { bsonType: 'string' },
-            cnpj: { bsonType: 'string' },
-            cpf: { bsonType: 'string' },
-            repLegal: { bsonType: 'string' },
-            telefone: { bsonType: 'string' },
-            email: { bsonType: 'string' },
-            endereco: {
-              bsonType: 'object',
-              required: ['numeroEnd', 'complemento', 'bairro', 'cidade', 'estado', 'cep', 'rua'],
-              properties: {
-                numeroEnd: { bsonType: 'string' },
-                complemento: { bsonType: 'string' },
-                bairro: { bsonType: 'string' },
-                cidade: { bsonType: 'string' },
-                estado: {
-                  bsonType: 'string',
-                  enum: ['SP', 'RJ', 'MG', 'AC'] // ajuste conforme necessário
-                },
-                cep: { bsonType: 'string' },
-                rua: { bsonType: 'string' }
-              }
-            },
-            logo: { bsonType: 'string' },
-            descricao: { bsonType: 'string' },
-            dataFund: { bsonType: 'date' },
-            causaSocial: { bsonType: 'string' },
-            redeSocial: {
-              bsonType: 'object',
-              required: ['instagram', 'facebook', 'site'],
-              properties: {
-                instagram: { bsonType: 'string' },
-                facebook: { bsonType: 'string' },
-                site: { bsonType: 'string' }
-              }
-            },
-            arquivosLegais: {
-              bsonType: 'array',
-              items: { bsonType: 'string' }
-            },
-            imagens: {
-              bsonType: 'array',
-              items: { bsonType: 'string' }
-            },
-            
-                          
-                          
-          }
-        }
-      },
-      validationLevel: 'strict',
-      validationAction: 'error'
-    });
-
-    // Agora insere a ONG normalmente
+//     "razaoSocial": "Associação de Apoio a Animais Abandonados",
+//     "nomeFantasia": "Ajuda Bicho",
+//     "cnpj": "00.000.000/0001-00", 
+//     "cpf": "111.222.333-44",
+//     "repLegal": "Maria Oliveira",
+//     "telefone": "(11) 98765-4321",
+//     "email": "contato@ajudabicho.org.br",
     
-    const resultado = await ongs.insertOne(novaOng);
-    console.log('✅ ONG cadastrada com sucesso:', resultado.insertedId);
-  } catch (err) {
-    console.error('❌ Erro ao cadastrar ONG:', err);
-  } finally {
-    await client.close();
-  }
-}
-
-run();
+//     "endereco": {
+//         "numeroEnd": "150",
+//         "complemento": "Bloco B",
+//         "bairro": "Jardim da Paz",
+//         "cidade": "Sorocaba",
+//         "estado": "SP", 
+//         "cep": "18010-000",
+//         "rua": "Rua das Flores"
+//     },
+    
+//     "logo": "link_para_logo.png",
+//     "descricao": "ONG focada no resgate, reabilitação e adoção de animais.",
+//     "dataFund": "2010-05-20T00:00:00.000Z", 
+//     "causaSocial": "Proteção Animal",
+    
+//     "redeSocial": {
+//         "instagram": "@ajudabicho",
+//         "facebook": "fb.com/ajudabicho",
+//         "site": "www.ajudabicho.org.br"
+//     },
+    
+//     "arquivosLegais": [
+//         "link_para_estatuto.pdf",
+//         "link_para_ata.pdf"
+//     ],
+//     "imagens": [
+//         "link_para_foto1.jpg",
+//         "link_para_foto2.jpg"
+//     ],
+    
+//     "assignedTo": [
+//         "68f856f39ebd5cc30273f567"
+//     ]
+// }

@@ -1,4 +1,5 @@
 const Ong = require('../models/ongModel'); 
+const Usuario = require('../models/Usuario');
 
 
 const cadastrarOng = async (req, res) => {
