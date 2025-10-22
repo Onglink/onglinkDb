@@ -1,94 +1,118 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri);
+const Ong = require('../models/Ong'); 
 
-async function cadastrarOng(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
-    const resultado = await ongs.insertOne(req.body);
-    res.status(201).json({ message: 'Ong cadastrada', id: resultado.insertedId });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao cadastrar', details: err });
-  } finally {
-    await client.close();
-  }
-}
 
-async function listarOngs(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
-    const lista = await ongs.find({}).toArray();
-    res.status(200).json(lista);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao listar', details: err });
-  } finally {
-    await client.close();
-  }
-}
+exports.cadastrarOng = async (req, res) => {
+    try {
+        
+        const novaOng = new Ong(req.body); 
+        await novaOng.save(); 
 
-async function buscarOngPorId (req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
-    const { id } = req.params;
-
-    const ong = await ongs.findOne({ _id: new ObjectId(id) });
-
-    if (!ong) {
-      return res.status(404).json({ error: 'ONG não encontrada' });
+        res.status(201).json({ 
+            message: 'ONG cadastrada com sucesso!', 
+            id: novaOng._id 
+        });
+    } catch (err) {
+        
+        res.status(400).json({
+            error: 'Erro ao cadastrar ONG.', 
+            details: err.message || err 
+        });
     }
-
-    res.status(200).json(ong);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao buscar ONG', details: err });
-  } finally {
-    await client.close();
-  }
-}
+};
 
 
-async function atualizarOng(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
-    const { id } = req.params;
-    const resultado = await ongs.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: req.body }
-    );
-    res.status(200).json({ message: 'Ong atualizada', modified: resultado.modifiedCount });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao atualizar', details: err });
-  } finally {
-    await client.close();
-  }
-}
+exports.listarOngs = async (req, res) => {
+    try {
+        
+        const lista = await Ong.find({}); 
+        
+        res.status(200).json(lista);
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'Erro ao listar ONGs.', 
+            details: err.message || err 
+        });
+    }
+};
 
-async function deletarOng(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const ongs = db.collection('ongs');
-    const { id } = req.params;
-    const resultado = await ongs.deleteOne({ _id: new ObjectId(id) });
-    res.status(200).json({ message: 'Ong deletada', deleted: resultado.deletedCount });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao deletar', details: err });
-  } finally {
-    await client.close();
-  }
-}
+
+exports.buscarOngPorId = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const ong = await Ong.findById(id)
+                              .populate('assignedTo', 'nome email') // Exibe nome e email dos usuários
+                              .exec(); // Executa a query
+
+        if (!ong) {
+            return res.status(404).json({ error: 'ONG não encontrada.' });
+        }
+
+        res.status(200).json(ong);
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'Erro ao buscar ONG. Verifique se o ID é válido.', 
+            details: err.message || err 
+        });
+    }
+};
+
+
+exports.atualizarOng = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const resultado = await Ong.findByIdAndUpdate(
+            id, 
+            { $set: req.body }, 
+            { new: true, runValidators: true } 
+        );
+
+        if (!resultado) {
+            return res.status(404).json({ error: 'ONG não encontrada para atualizar.' });
+        }
+        
+        res.status(200).json({ 
+            message: 'ONG atualizada com sucesso!', 
+            ong: resultado 
+        });
+    } catch (err) {
+        res.status(400).json({ 
+            error: 'Erro ao atualizar ONG. Verifique os dados.', 
+            details: err.message || err 
+        });
+    }
+};
+
+
+exports.deletarOng = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+       
+        const resultado = await Ong.findByIdAndDelete(id); 
+
+        if (!resultado) {
+            // Se o resultado for null, significa que não havia ONG com esse ID.
+            return res.status(404).json({ error: 'ONG não encontrada para deletar.' });
+        }
+
+        res.status(200).json({ 
+            message: 'ONG deletada com sucesso!', 
+            deleted: true 
+        });
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'Erro ao deletar ONG.', 
+            details: err.message || err 
+        });
+    }
+};
 
 module.exports = {
-  cadastrarOng,
-  listarOngs,
-  atualizarOng,
-  deletarOng,
-  buscarOngPorId
+    cadastrarOng,
+    listarOngs,
+    atualizarOng,
+    deletarOng,
+    buscarOngPorId
 };

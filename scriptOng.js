@@ -53,7 +53,7 @@ async function run() {
           required: [
             'razaoSocial', 'nomeFantasia', 'cnpj', 'cpf', 'repLegal',
             'telefone', 'email', 'endereco', 'logo', 'descricao',
-            'dataFund', 'causaSocial', 'redeSocial', 'arquivosLegais', 'imagens','usuario'
+            'dataFund', 'causaSocial', 'redeSocial', 'arquivosLegais', 'imagens'
           ],
           properties: {
             razaoSocial: { bsonType: 'string' },
@@ -100,20 +100,9 @@ async function run() {
               bsonType: 'array',
               items: { bsonType: 'string' }
             },
-            usuario: {
-              bsonType: 'object',
-              required: [''],
-              properties: {
-                nome: { bsonType: 'string' },
-                
-                status: {
-                  bsonType: 'string',
-                  enum: ['ong','user','admin'] // ajuste conforme necessário
-                },
-               
-              }
-            },
-
+            
+                          
+                          
           }
         }
       },

@@ -12,7 +12,6 @@ async function run() {
 
     const novoUsuario = {
       CodUsuario: 1001,
-      CNPJ: "12.345.678/0001-99", // se for representante de ONG
       Email: "ana.souza@exemplo.com",
       Senha: "senhaSegura123", // idealmente criptografada em produção
       Nome: "Ana Souza",
