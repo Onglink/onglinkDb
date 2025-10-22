@@ -1,6 +1,6 @@
-const Usuario = require('../models/Usuario'); 
+const Usuario = require('../models/usuarioModel'); 
 
-exports.cadastrarUsuario = async (req, res) => {
+const cadastrarUsuario = async (req, res) => {
     try {
         
         const novoUsuario = new Usuario(req.body); 
@@ -28,7 +28,7 @@ exports.cadastrarUsuario = async (req, res) => {
 };
 
 
-exports.listarUsuarios = async (req, res) => {
+const listarUsuarios = async (req, res) => {
     try {
         // Usa find(). Como a senha tem 'select: false' no Model, ela será omitida.
         const lista = await Usuario.find({}); 
@@ -44,7 +44,7 @@ exports.listarUsuarios = async (req, res) => {
 
 
 
-exports.atualizarUsuario = async (req, res) => {
+const atualizarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
         const dadosAtualizados = req.body;
@@ -73,7 +73,7 @@ exports.atualizarUsuario = async (req, res) => {
 };
 
 
-exports.deletarUsuario = async (req, res) => {
+const deletarUsuario = async (req, res) => {
     try {
         const { id } = req.params;
         

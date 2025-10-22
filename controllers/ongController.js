@@ -1,7 +1,7 @@
-const Ong = require('../models/Ong'); 
+const Ong = require('../models/ongModel'); 
 
 
-exports.cadastrarOng = async (req, res) => {
+const cadastrarOng = async (req, res) => {
     try {
         
         const novaOng = new Ong(req.body); 
@@ -21,7 +21,7 @@ exports.cadastrarOng = async (req, res) => {
 };
 
 
-exports.listarOngs = async (req, res) => {
+const listarOngs = async (req, res) => {
     try {
         
         const lista = await Ong.find({}); 
@@ -36,7 +36,7 @@ exports.listarOngs = async (req, res) => {
 };
 
 
-exports.buscarOngPorId = async (req, res) => {
+const buscarOngPorId = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -58,7 +58,7 @@ exports.buscarOngPorId = async (req, res) => {
 };
 
 
-exports.atualizarOng = async (req, res) => {
+const atualizarOng = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -85,7 +85,7 @@ exports.atualizarOng = async (req, res) => {
 };
 
 
-exports.deletarOng = async (req, res) => {
+const deletarOng = async (req, res) => {
     try {
         const { id } = req.params;
         
