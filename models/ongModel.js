@@ -10,8 +10,7 @@ const enderecoSchema = new Schema({
     estado: { 
         type: String, 
         required: true,
-        uppercase: true, 
-        enum: ['SP', 'RJ', 'MG', 'AC'] 
+         
     },
     cep: { type: String, required: true },
     rua: { type: String, required: true }
