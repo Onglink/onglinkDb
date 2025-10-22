@@ -7,8 +7,13 @@ let userSchema = new Schema({
     nome: { type: String, required: true },
     cpf: { type: String, required: true },
     email: { type: String, required: true, unique: true }, // Email deve ser único
-    status:{type: String, enum:['user','admin','ong']},
+    status:{type: String, enum:['user','admin','ong'], default:'user'},
     senha:{type:String, required: true},
+    assignedTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Ong',
+    default: null, // Opcional, será preenchido na validação
+  }
 },
 
 
