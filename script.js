@@ -1,3 +1,7 @@
+//string para conexão correta:
+//MONGO_URI=mongodb+srv://rafael_sartori:onglink_fatec@onglinkdb.9kxqdci.mongodb.net/onglinkDb
+//PORT=4000
+
 //use 'onglinkDb';
 // console.log(
 // db.ongs.insertOne({
@@ -17,6 +21,6 @@
 // })
 // );
 
-console.log(
-    db.ongs.find({})
-);
+// console.log(
+//     db.ongs.find({})
+// );
