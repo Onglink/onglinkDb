@@ -2,7 +2,7 @@ const Ong = require('../models/ongModel');
 const Usuario = require('../models/usuarioModel');
 const Publicacao = require('../models/publicacaoModel');
 
-const postarNoFeed = async (req, res) => {
+const criarPublicacao = async (req, res) => {
     try {
         const novaPublicacao = new Publicacao(req.body);
         const publicacaoSalva = await novaPublicacao.save();
@@ -17,7 +17,7 @@ const postarNoFeed = async (req, res) => {
 };
 
 
-const buscarPost = async (req, res) => {
+const buscarPublicacao = async (req, res) => {
     try {
         const publicacoes = await Publicacao
             .find({})
@@ -35,7 +35,7 @@ const buscarPost = async (req, res) => {
 };
 
 
-const buscarPostPorId = async (req, res) => {
+const buscarPublicacaoPorId = async (req, res) => {
     try {
         const publicacao = await Publicacao
             .findById(req.params.id)
@@ -55,7 +55,7 @@ const buscarPostPorId = async (req, res) => {
 };
 
 
-const editarPost = async (req, res) => {
+const editarPublicacao = async (req, res) => {
     try {
         const publicacaoAtualizada = await Publicacao.findByIdAndUpdate(
             req.params.id, 
@@ -78,7 +78,7 @@ const editarPost = async (req, res) => {
 };
 
 
-const deletarPost = async (req, res) => {
+const excluirPublicacao = async (req, res) => {
     try {
         const publicacaoExcluida = await Publicacao.findByIdAndDelete(req.params.id);
 
@@ -100,10 +100,10 @@ const deletarPost = async (req, res) => {
 
 
 module.exports = {
-  postarNoFeed,
-  buscarPost,
-  buscarPostPorId,
-  editarPost,
-  deletarPost,
+  criarPublicacao,
+  buscarPublicacao,
+  buscarPublicacaoPorId,
+  editarPublicacao,
+  excluirPublicacao,
   
 };
