@@ -2,16 +2,16 @@ const express = require('express');
 const router = express.Router();
 const {
   criarPublicacao,
-  listarPublicacoes,
+  buscarPublicacao,
   buscarPublicacaoPorId,
-  atualizarPublicacao,
-  deletarPublicacao
+  editarPublicacao,
+  excluirPublicacao
 } = require('../controllers/publicacaoController');
 
 router.post('/', criarPublicacao);
-router.get('/', listarPublicacoes);
+router.get('/',  buscarPublicacao);
 router.get('/:id', buscarPublicacaoPorId);
-router.put('/:id', atualizarPublicacao);
-router.delete('/:id', deletarPublicacao);
+router.put('/:id', editarPublicacao);
+router.delete('/:id', excluirPublicacao);
 
 module.exports = router;

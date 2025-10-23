@@ -1,105 +1,109 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri);
+const Ong = require('../models/ongModel'); 
+const Usuario = require('../models/usuarioModel');
+const Publicacao = require('../models/publicacaoModel');
 
-async function criarPublicacao(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const publicacoes = db.collection('publicacoes');
+const criarPublicacao = async (req, res) => {
+    try {
+        const novaPublicacao = new Publicacao(req.body);
+        const publicacaoSalva = await novaPublicacao.save();
 
-    const novaPublicacao = {
-      CodPubli: req.body.CodPubli,
-      Titulo: req.body.Titulo,
-      Texto: req.body.Texto,
-      Imagens: req.body.Imagens || [],
-      CodUsuario: req.body.CodUsuario,
-      DataPublicacao: new Date()
-    };
-
-    const resultado = await publicacoes.insertOne(novaPublicacao);
-    res.status(201).json({ message: 'Publicação criada com sucesso', id: resultado.insertedId });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao criar publicação', details: err });
-  } finally {
-    await client.close();
-  }
-}
-
-async function listarPublicacoes(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const publicacoes = db.collection('publicacoes');
-    const lista = await publicacoes.find({}).toArray();
-    res.status(200).json(lista);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao listar publicações', details: err });
-  } finally {
-    await client.close();
-  }
-}
-
-async function buscarPublicacaoPorId(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const publicacoes = db.collection('publicacoes');
-    const { id } = req.params;
-    const resultado = await publicacoes.findOne({ _id: new ObjectId(id) });
-
-    if (!resultado) {
-      return res.status(404).json({ error: 'Publicação não encontrada' });
+        res.status(201).json(publicacaoSalva);
+    } catch (error) {
+                res.status(400).json({ 
+            message: 'Erro ao criar a publicação.', 
+            error: error.message 
+        });
     }
+};
 
-    res.status(200).json(resultado);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao buscar publicação', details: err });
-  } finally {
-    await client.close();
-  }
-}
 
-async function atualizarPublicacao(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const publicacoes = db.collection('publicacoes');
-    const { id } = req.params;
+const buscarPublicacao = async (req, res) => {
+    try {
+        const publicacoes = await Publicacao
+            .find({})
+            .populate('assignedTo', 'nome email') 
+            .sort({ createdAt: -1 })// ordenar das mais novas para as mais antigas
+            .exec();
 
-    const resultado = await publicacoes.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: req.body }
-    );
+        res.status(200).json(publicacoes);
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Erro ao buscar publicações.', 
+            error: error.message 
+        });
+    }
+};
 
-    res.status(200).json({ message: 'Publicação atualizada', modified: resultado.modifiedCount });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao atualizar publicação', details: err });
-  } finally {
-    await client.close();
-  }
-}
 
-async function deletarPublicacao(req, res) {
-  try {
-    await client.connect();
-    const db = client.db('onglinkDb');
-    const publicacoes = db.collection('publicacoes');
-    const { id } = req.params;
+const buscarPublicacaoPorId = async (req, res) => {
+    try {
+        const publicacao = await Publicacao
+            .findById(req.params.id)
+            .populate('assignedTo', 'nome email'); 
 
-    const resultado = await publicacoes.deleteOne({ _id: new ObjectId(id) });
-    res.status(200).json({ message: 'Publicação deletada', deleted: resultado.deletedCount });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao deletar publicação', details: err });
-  } finally {
-    await client.close();
-  }
-}
+        if (!publicacao) {
+            return res.status(404).json({ message: 'Publicação não encontrada.' });
+        }
+
+        res.status(200).json(publicacao);
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Erro ao buscar a publicação.', 
+            error: error.message 
+        });
+    }
+};
+
+
+const editarPublicacao = async (req, res) => {
+    try {
+        const publicacaoAtualizada = await Publicacao.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true, runValidators: true } 
+          ).populate('assignedTo', 'nome email');
+
+        if (!publicacaoAtualizada) {
+            return res.status(404).json({ message: 'Publicação não encontrada para edição.' });
+        }
+
+        res.status(200).json(publicacaoAtualizada);
+    } catch (error) {
+        
+        res.status(400).json({ 
+            message: 'Erro ao editar a publicação.', 
+            error: error.message 
+        });
+    }
+};
+
+
+const excluirPublicacao = async (req, res) => {
+    try {
+        const publicacaoExcluida = await Publicacao.findByIdAndDelete(req.params.id);
+
+        if (!publicacaoExcluida) {
+            return res.status(404).json({ message: 'Publicação não encontrada para exclusão.' });
+        }
+
+        
+        res.status(204).send(); 
+        
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Erro ao excluir a publicação.', 
+            error: error.message 
+        });
+    }
+};
+
+
 
 module.exports = {
   criarPublicacao,
-  listarPublicacoes,
+  buscarPublicacao,
   buscarPublicacaoPorId,
-  atualizarPublicacao,
-  deletarPublicacao
+  editarPublicacao,
+  excluirPublicacao,
+  
 };
