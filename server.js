@@ -5,6 +5,16 @@ const port = 4000;
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+// Importando middleware e swagger
+
+const apiKeyAuth = require('./middleware/apiKeyAuth') 
+const swaggerUI = require('swagger-ui-express')
+const swaggerFile = require('./swagger-output.json')
+
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerFile))
+
+app.use(apiKeyAuth) 
+
 const MONGO_URI = process.env.MONGO_URI
 
 mongoose.connect(MONGO_URI)
