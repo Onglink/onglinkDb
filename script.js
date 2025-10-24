@@ -1,5 +1,5 @@
 //string para conexão correta:
-//MONGO_URI=mongodb+srv://rafael_sartori:onglink_fatec@onglinkdb.9kxqdci.mongodb.net/onglinkDb
+//MONGO_URI=mongodb+srv://onglinkmuxn_db_user:onglink_fatec@onglinkdb.ljvrr5b.mongodb.net/onglinkDb
 //PORT=4000
 
 //use 'onglinkDb';
