@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 
 // --- 1. Schema Principal de usuário ---
-let userSchema = new Schema({
+const userSchema = new Schema({
     nome: { type: String, required: true },
     cpf: { type: String, required: true },
     email: { type: String, required: true, unique: true }, // Email deve ser único

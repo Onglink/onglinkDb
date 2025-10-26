@@ -24,7 +24,7 @@ const redeSocialSchema = new Schema({
 }, { _id: false, strict: true }); 
 
 // --- 3. Schema Principal da ONG ---
-let ongSchema = new Schema({
+const ongSchema = new Schema({
     
     razaoSocial: { type: String, required: true },
     nomeFantasia: { type: String, required: true },

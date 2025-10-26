@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 
 // --- 1. Schema Principal de publicação ---
-let publicacaoSchema = new Schema({
+const publicacaoSchema = new Schema({
     titulo: { type: String, required: true },
     descricao: { type: String, required: true },
     imagem:[{type: String, required: true}],
