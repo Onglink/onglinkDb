@@ -27,3 +27,5 @@ const denunciaSchema = new Schema ({
     timestamps: true, // Adiciona automaticamente 'createdAt' e 'updatedAt'
 
 })
+
+module.exports = mongoose.model("Denuncia", denunciaSchema);
