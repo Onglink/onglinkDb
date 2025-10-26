@@ -21,7 +21,7 @@ const cadastrarUsuario = async (req, res) => {
             });
         }
         res.status(400).json({
-            error: 'Erro ao cadastrar usuário.',
+            error: 'Erro ao cadastrar usuário, dados inválidos ou faltando.',
             details: err.message || err
         });
     }
@@ -31,7 +31,7 @@ const cadastrarUsuario = async (req, res) => {
 const listarUsuarios = async (req, res) => {
     try {
         // Usa find(). Como a senha tem 'select: false' no Model, ela será omitida.
-        const lista = await Usuario.find({});
+        const lista = await Usuario.find({}).select('-senha');
 
         res.status(200).json(lista);
     } catch (err) {
@@ -41,6 +41,24 @@ const listarUsuarios = async (req, res) => {
         });
     }
 };
+
+const buscarUsuarioPorId = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const usuario = await Usuario.findById(id).select('-senha');
+
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuário não encontrado.' });
+        }
+        res.status(200).json({usuario});
+    } catch (err) {
+        res.status(500).json({
+            error:'Erro ao bucar o usuário, verifique o Id.',
+            details: err.message || err
+        });
+
+    }
+}
 
 
 
@@ -100,5 +118,5 @@ module.exports = {
     listarUsuarios,
     atualizarUsuario,
     deletarUsuario,
-
+    buscarUsuarioPorId
 };
