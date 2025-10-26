@@ -42,7 +42,7 @@ const buscarOngPorId = async (req, res) => {
         const { id } = req.params;
 
         const ong = await Ong.findById(id)
-            .populate('assignedTo', 'nome', 'email') // Exibe nome e email dos usuários
+            .populate('assignedTo', 'nome email') // Exibe nome e email dos usuários
             .exec(); // Executa a query
 
         if (!ong) {
