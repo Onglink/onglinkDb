@@ -1,4 +1,4 @@
-const Ong = require('../models/ongModel'); 
+const Ong = require('../models/ongModel');
 const Usuario = require('../models/usuarioModel');
 const Publicacao = require('../models/publicacaoModel');
 
@@ -9,9 +9,9 @@ const criarPublicacao = async (req, res) => {
 
         res.status(201).json(publicacaoSalva);
     } catch (error) {
-                res.status(400).json({ 
-            message: 'Erro ao criar a publicação.', 
-            error: error.message 
+        res.status(400).json({
+            message: 'Erro ao criar a publicação.',
+            error: error.message
         });
     }
 };
@@ -21,15 +21,15 @@ const buscarPublicacao = async (req, res) => {
     try {
         const publicacoes = await Publicacao
             .find({})
-            .populate('assignedTo', 'nome email') 
+            .populate('assignedTo', 'nome email')
             .sort({ createdAt: -1 })// ordenar das mais novas para as mais antigas
             .exec();
 
         res.status(200).json(publicacoes);
     } catch (error) {
-        res.status(500).json({ 
-            message: 'Erro ao buscar publicações.', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Erro ao buscar publicações.',
+            error: error.message
         });
     }
 };
@@ -39,7 +39,7 @@ const buscarPublicacaoPorId = async (req, res) => {
     try {
         const publicacao = await Publicacao
             .findById(req.params.id)
-            .populate('assignedTo', 'nome email'); 
+            .populate('assignedTo', 'nome email');
 
         if (!publicacao) {
             return res.status(404).json({ message: 'Publicação não encontrada.' });
@@ -47,9 +47,9 @@ const buscarPublicacaoPorId = async (req, res) => {
 
         res.status(200).json(publicacao);
     } catch (error) {
-        res.status(500).json({ 
-            message: 'Erro ao buscar a publicação.', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Erro ao buscar a publicação.',
+            error: error.message
         });
     }
 };
@@ -58,10 +58,10 @@ const buscarPublicacaoPorId = async (req, res) => {
 const editarPublicacao = async (req, res) => {
     try {
         const publicacaoAtualizada = await Publicacao.findByIdAndUpdate(
-            req.params.id, 
-            req.body, 
-            { new: true, runValidators: true } 
-          ).populate('assignedTo', 'nome email');
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        ).populate('assignedTo', 'nome email');
 
         if (!publicacaoAtualizada) {
             return res.status(404).json({ message: 'Publicação não encontrada para edição.' });
@@ -69,10 +69,10 @@ const editarPublicacao = async (req, res) => {
 
         res.status(200).json(publicacaoAtualizada);
     } catch (error) {
-        
-        res.status(400).json({ 
-            message: 'Erro ao editar a publicação.', 
-            error: error.message 
+
+        res.status(400).json({
+            message: 'Erro ao editar a publicação.',
+            error: error.message
         });
     }
 };
@@ -86,13 +86,13 @@ const excluirPublicacao = async (req, res) => {
             return res.status(404).json({ message: 'Publicação não encontrada para exclusão.' });
         }
 
-        
-        res.status(204).send(); 
-        
+
+        res.status(204).send();
+
     } catch (error) {
-        res.status(500).json({ 
-            message: 'Erro ao excluir a publicação.', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Erro ao excluir a publicação.',
+            error: error.message
         });
     }
 };
@@ -100,10 +100,10 @@ const excluirPublicacao = async (req, res) => {
 
 
 module.exports = {
-  criarPublicacao,
-  buscarPublicacao,
-  buscarPublicacaoPorId,
-  editarPublicacao,
-  excluirPublicacao,
-  
+    criarPublicacao,
+    buscarPublicacao,
+    buscarPublicacaoPorId,
+    editarPublicacao,
+    excluirPublicacao,
+
 };
