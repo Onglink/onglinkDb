@@ -119,5 +119,5 @@ module.exports = {
     buscarUsuarioPorId,
     atualizarUsuario,
     deletarUsuario,
-    buscarUsuarioPorId
+    
 };
