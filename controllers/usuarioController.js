@@ -116,6 +116,7 @@ const deletarUsuario = async (req, res) => {
 module.exports = {
     cadastrarUsuario,
     listarUsuarios,
+    buscarUsuarioPorId,
     atualizarUsuario,
     deletarUsuario,
     buscarUsuarioPorId
