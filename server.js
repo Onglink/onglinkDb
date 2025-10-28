@@ -39,7 +39,8 @@ app.use(express.json());
 const ongRoutes = require('./routes/ong');
 const usuarioRoutes = require('./routes/usuario');
 const publicacaoRoutes = require('./routes/publicacao');
-
+const denunciaRoutes = require('./routes/denuncia');
 app.use('/api/ongs', ongRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/publicacoes', publicacaoRoutes); 
+app.use('/api/denuncia',denunciaRoutes);
