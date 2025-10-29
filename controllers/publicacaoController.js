@@ -7,7 +7,8 @@ const criarPublicacao = async (req, res) => {
         const novaPublicacao = new Publicacao(req.body);
         const publicacaoSalva = await novaPublicacao.save();
 
-        res.status(201).json(publicacaoSalva);
+        res.status(201).json({message:"Publicação efetuada com sucesso",
+            id:publicacaoSalva._id});
     } catch (error) {
         res.status(400).json({
             message: 'Erro ao criar a publicação.',
@@ -21,7 +22,7 @@ const buscarPublicacao = async (req, res) => {
     try {
         const publicacoes = await Publicacao
             .find({})
-            .populate('assignedTo', 'nome email')
+            .populate('criadoPor', 'nome email')
             .sort({ createdAt: -1 })// ordenar das mais novas para as mais antigas
             .exec();
 
@@ -39,7 +40,7 @@ const buscarPublicacaoPorId = async (req, res) => {
     try {
         const publicacao = await Publicacao
             .findById(req.params.id)
-            .populate('assignedTo', 'nome email');
+            .populate('criadoPor', 'nome email');
 
         if (!publicacao) {
             return res.status(404).json({ message: 'Publicação não encontrada.' });
@@ -61,7 +62,7 @@ const editarPublicacao = async (req, res) => {
             req.params.id,
             req.body,
             { new: true, runValidators: true }
-        ).populate('assignedTo', 'nome email');
+        ).populate('criadoPor', 'nome email');
 
         if (!publicacaoAtualizada) {
             return res.status(404).json({ message: 'Publicação não encontrada para edição.' });

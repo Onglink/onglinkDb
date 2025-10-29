@@ -1,7 +1,8 @@
 // {
-//     "nome": "João da Silva",
-//     "cpf": "123.456.789-00", 
-//     "email": "joao.silva@exemplo.com",
-//     "status": "admin", 
-//     "senha": "senhaSegura123"
+//     "nome": "Mariana Souza",
+//     "cpf": "12345678901",
+//     "email": "mariana.souza@exemplo.com",
+//     "status": "user",
+//     "senha": "senhaSenha123",
+//     "assignedTo": null 
 // }

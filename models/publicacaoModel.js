@@ -7,10 +7,10 @@ const publicacaoSchema = new Schema({
     titulo: { type: String, required: true },
     descricao: { type: String, required: true },
     imagem:[{type: String, required: true}],
-    assignedTo: {
+    criadoPor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Ong',
-    default: null, // Opcional, será preenchido na validação
+    required:true
   }
 },
 
@@ -20,4 +20,4 @@ const publicacaoSchema = new Schema({
     timestamps: true 
 });
 
-module.exports = mongoose.model('Publicacao', publicacaoSchema)
+module.exports = mongoose.model('Publicacao', publicacaoSchema, 'publicacoes')
