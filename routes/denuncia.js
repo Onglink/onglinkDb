@@ -9,7 +9,7 @@ const {
 
 router.get("/", listarDenuncia);
 router.get("/:id", buscarDenuncia);
-router.post("/",cadastrarDenuncia);
-router.delete("/:id",deletarDenuncia);
+router.post("/", cadastrarDenuncia);
+router.delete("/:id", deletarDenuncia);
 
 module.exports = router;

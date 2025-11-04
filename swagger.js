@@ -20,9 +20,17 @@ const doc = {
     security: [{
         apiKeyAuth: []
     }],
+    
+ 
 };
 
 const outputFile = './swagger-output.json';
-const endpointsFiles = ['./server.js', './routes/denuncia.js','./routes/ong.js', './routes/publicacao.js', './routes/usuario.js']
+const endpointsFiles = [
+    './routes/denuncia.js',
+    './routes/ong.js', 
+    './routes/publicacao.js', 
+    './routes/usuario.js',
+    
+]
 
 swaggerAutogen(outputFile, endpointsFiles, doc);
