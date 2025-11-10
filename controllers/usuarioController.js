@@ -113,11 +113,54 @@ const deletarUsuario = async (req, res) => {
     }
 };
 
+const loginUsuario = async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+
+        if (!email || !senha) {
+            return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
+        }
+
+        // 2. Busca o usuário pelo email e INCLUI a senha na busca (+senha)
+        // Precisamos do '+senha' porque no Schema ela está como 'select: false'
+        const usuario = await Usuario.findOne({ email }).select('+senha');
+
+        if (!usuario) {
+            return res.status(401).json({ error: 'Email ou senha inválidos.' });
+        }
+
+        // 3. Comparação de senha (ATENÇÃO: Isso é comparação de texto simples!)
+        // Se você estiver usando bcrypt, troque por: await bcrypt.compare(senha, usuario.senha)
+        if (senha !== usuario.senha) {
+            return res.status(401).json({ error: 'Email ou senha inválidos.' });
+        }
+
+        // 4. Login bem-sucedido! Retorna os dados (sem a senha)
+        usuario.senha = undefined; // Remove a senha do objeto final por segurança
+
+        res.status(200).json({
+            message: 'Login realizado com sucesso!',
+            usuario: {
+                _id: usuario._id,
+                nome: usuario.nome,
+                email: usuario.email,
+                status: usuario.status
+            }
+            
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro interno no servidor ao realizar login.' });
+    }
+};
+
 module.exports = {
     cadastrarUsuario,
     listarUsuarios,
     buscarUsuarioPorId,
     atualizarUsuario,
     deletarUsuario,
+    loginUsuario,
     
 };

@@ -5,13 +5,16 @@ const {
   listarUsuarios,
   buscarUsuarioPorId,
   atualizarUsuario,
-  deletarUsuario
+  deletarUsuario,
+  loginUsuario,
 } = require('../controllers/usuarioController');
 
+router.post('/login', loginUsuario);
 router.post('/', cadastrarUsuario);
 router.get('/', listarUsuarios);
 router.get('/:id', buscarUsuarioPorId);
 router.put('/:id', atualizarUsuario);
 router.delete('/:id', deletarUsuario);
+
 
 module.exports = router;

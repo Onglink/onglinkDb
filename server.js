@@ -1,8 +1,11 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const port = 4000;
-const cors = require('cors');
+app.use(cors());
+app.use(express.json());
+
 const mongoose = require('mongoose');
 
 // Importando middleware e swagger
@@ -32,8 +35,7 @@ mongoose.connect(MONGO_URI)
         process.exit(1); 
     });
 
-app.use(cors());
-app.use(express.json());
+
 
 // Rotas
 const ongRoutes = require('./routes/ong');
