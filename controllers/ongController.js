@@ -8,18 +8,30 @@ const cadastrarOng = async (req, res) => {
         const novaOng = new Ong(req.body);
         await novaOng.save();
 
-        res.status(201).json({
-            message: 'ONG cadastrada com sucesso!',
-            id: novaOng._id
-        });
-    } catch (err) {
+       const idUsuarioDono = req.body.assignedTo && req.body.assignedTo[0];
 
+        if (idUsuarioDono) {
+            // Atualiza o documento do USUÁRIO para ele saber que agora possui esta ONG
+            await Usuario.findByIdAndUpdate(idUsuarioDono, {
+                assignedTo: ongSalva._id, 
+                // status: 'em_analise' // (Opcional) Atualiza o status do usuário também se quiser.
+            });
+        }
+
+        res.status(201).json({
+            message: 'ONG cadastrada com sucesso! Aguardando aprovação.',
+            id: ongSalva._id
+        });
+
+    } catch (err) {
+        console.error("Erro ao cadastrar ONG:", err);
         res.status(400).json({
             error: 'Erro ao cadastrar ONG.',
             details: err.message || err
         });
     }
 };
+
 
 
 const listarOngs = async (req, res) => {
