@@ -6,6 +6,11 @@ const port = 4000;
 app.use(cors());
 app.use(express.json());
 
+app.use(cors({
+  origin: 'https://onglink.vercel.app',
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  credentials: true,
+}))
 
 const allowedOrigins = ['https://onglink.vercel.app'];
 
