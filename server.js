@@ -78,3 +78,5 @@ app.use('/api/ongs', ongRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/publicacoes', publicacaoRoutes);
 app.use('/api/denuncia', denunciaRoutes);
+
+module.exports = app
