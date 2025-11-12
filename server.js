@@ -6,6 +6,16 @@ const port = 4000;
 app.use(cors());
 app.use(express.json());
 
+
+const allowedOrigins = ['https://onglink.vercel.app'];
+
+// Configuração do CORS
+app.use(cors({
+  origin: allowedOrigins,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Permite todos os métodos que você usa
+  credentials: true, // Importante se você usa cookies ou sessões
+}));
+
 const mongoose = require('mongoose');
 
 // Importando middleware e swagger
