@@ -42,9 +42,9 @@ app.use(cors({
 const mongoose = require('mongoose');
 
 // Importando middleware e swagger
-const apiKeyAuth = require('./middleware/apiKeyAuth');
+const apiKeyAuth = require('../middleware/apiKeyAuth');
 const swaggerUI = require('swagger-ui-express');
-const swaggerFile = require('./swagger-output.json');
+const swaggerFile = require('../swagger-output.json');
 
 // Rota do Swagger (Pública, ANTES da autenticação)
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerFile));
@@ -69,10 +69,10 @@ mongoose.connect(MONGO_URI)
     });
 
 // Rotas da API
-const ongRoutes = require('./routes/ong');
-const usuarioRoutes = require('./routes/usuario');
-const publicacaoRoutes = require('./routes/publicacao');
-const denunciaRoutes = require('./routes/denuncia');
+const ongRoutes = require('../routes/ong');
+const usuarioRoutes = require('../routes/usuario');
+const publicacaoRoutes = require('../routes/publicacao');
+const denunciaRoutes = require('../routes/denuncia');
 
 app.use('/api/ongs', ongRoutes);
 app.use('/api/usuarios', usuarioRoutes);
