@@ -58,6 +58,11 @@ const ongSchema = new Schema({
         ref: 'Usuario',
         required: true, // Garante que a ONG tenha pelo menos 1 usuário atribuído ao ser criada
     }],
+    situacaoCadastral:{
+        type: String,
+        enum: ['em analise', 'aprovada', 'rejeitada'],
+        default: 'em analise'
+    }
 },
 
     {
