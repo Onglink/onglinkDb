@@ -6,7 +6,7 @@ const cadastrarOng = async (req, res) => {
     try {
 
         const novaOng = new Ong(req.body);
-        await novaOng.save();
+        const ongSalva = await novaOng.save();
 
        const idUsuarioDono = req.body.assignedTo && req.body.assignedTo[0];
 
@@ -71,9 +71,15 @@ const buscarOngPorId = async (req, res) => {
 };
 
 
+// --- UPDATE (Dados Gerais) ---
 const atualizarOng = async (req, res) => {
     try {
         const { id } = req.params;
+        
+        // Segurança: Remove situacaoCadastral do body para evitar auto-aprovação via rota comum
+        if (req.body.situacaoCadastral) {
+            delete req.body.situacaoCadastral;
+        }
 
         const resultado = await Ong.findByIdAndUpdate(
             id,
@@ -81,22 +87,32 @@ const atualizarOng = async (req, res) => {
             { new: true, runValidators: true }
         );
 
-        if (!resultado) {
-            return res.status(404).json({ error: 'ONG não encontrada para atualizar.' });
-        }
+        if (!resultado) return res.status(404).json({ error: 'ONG não encontrada.' });
 
-        res.status(200).json({
-            message: 'ONG atualizada com sucesso!',
-            ong: resultado
-        });
+        res.status(200).json({ message: 'ONG atualizada!', ong: resultado });
     } catch (err) {
-        res.status(400).json({
-            error: 'Erro ao atualizar ONG. Verifique os dados.',
-            details: err.message || err
-        });
+        res.status(400).json({ error: 'Erro ao atualizar ONG.', details: err.message });
     }
 };
+// --- UPDATE (Apenas Status - Uso Administrativo) ---
+const atualizarStatusOng = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { situacaoCadastral } = req.body;
 
+        const resultado = await Ong.findByIdAndUpdate(
+            id,
+            { situacaoCadastral },
+            { new: true, runValidators: true }
+        );
+
+        if (!resultado) return res.status(404).json({ error: 'ONG não encontrada.' });
+
+        res.status(200).json({ message: 'Status atualizado!', ong: resultado });
+    } catch (err) {
+        res.status(400).json({ error: 'Erro ao atualizar status.', details: err.message });
+    }
+};
 
 const deletarOng = async (req, res) => {
     try {
@@ -127,5 +143,6 @@ module.exports = {
     listarOngs,
     atualizarOng,
     deletarOng,
-    buscarOngPorId
+    buscarOngPorId,
+    atualizarStatusOng
 };
