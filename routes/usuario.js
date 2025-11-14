@@ -55,7 +55,7 @@ const {
 } = require('../controllers/usuarioController'); 
 
 router.post('/login', loginUsuario);
-router.post('/', cadastrarUsuario);
+router.post('/cadastro', cadastrarUsuario);
 router.get('/', listarUsuarios);
 router.get('/:id', buscarUsuarioPorId);
 router.put('/:id', atualizarUsuario);

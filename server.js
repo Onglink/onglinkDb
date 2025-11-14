@@ -28,17 +28,12 @@ const corsOptions = {
 
 // Aplica as opções de CORS ANTES de todas as outras rotas
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 // ------------------------------------------
 
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Configuração do CORS
-app.use(cors({
-  origin: allowedOrigins,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Permite todos os métodos que você usa
-  credentials: true, // Importante se você usa cookies ou sessões
-}));
 
 const mongoose = require('mongoose');
 
@@ -80,4 +75,11 @@ app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/publicacoes', publicacaoRoutes);
 app.use('/api/denuncia', denunciaRoutes);
 
-module.exports = app
+
+
+// Configuração do CORS
+//app.use(cors({
+//origin: allowedOrigins,
+  //methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Permite todos os métodos que você usa
+  //credentials: true, // Importante se você usa cookies ou sessões
+//}));

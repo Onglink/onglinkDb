@@ -832,7 +832,7 @@
     },
     "Usuario": {
       "type": "object",
-      "required": ["nome", "cpf", "email", "status", "senha"],
+      "required": ["nome", "cpf", "email", "senha"],
       "properties": {
         "nome": {
           "type": "string",
@@ -847,23 +847,11 @@
           "format": "email",
           "example": "maria@exemplo.com"
         },
-        "status": {
-          "type": "string",
-          "enum": ["user", "admin", "ong"],
-          "default": "user"
-        },
         "senha": {
           "type": "string",
           "format": "password",
           "description": "A senha do usuário (não será retornada no GET)",
           "example": "senhaSegura123"
-        },
-        "assignedTo": {
-          "type": "string",
-          "format": "ObjectId",
-          "nullable": true,
-          "description": "ID da ONG associada (se o status for 'ong')",
-          "example": "60c72b9f91e4d0001f8d4e9d"
         }
       }
     },
