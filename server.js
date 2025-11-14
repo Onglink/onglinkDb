@@ -28,7 +28,7 @@ const corsOptions = {
 
 // Aplica as opções de CORS ANTES de todas as outras rotas
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options(/'*'/, cors(corsOptions));
 // ------------------------------------------
 
 // Middleware para parsear JSON
