@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+
+const {checkRole} = require('../middleware/tokenAuth')
+
 const {
   criarPublicacao,
   buscarPublicacao,
@@ -8,10 +11,12 @@ const {
   excluirPublicacao
 } = require('../controllers/publicacaoController');
 
-router.post('/', criarPublicacao);
+const ROLES_PUBLICADORES = ['admin', 'ong'];
+
+router.post('/', checkRole(ROLES_PUBLICADORES), criarPublicacao);
 router.get('/',  buscarPublicacao);
 router.get('/:id', buscarPublicacaoPorId);
-router.put('/:id', editarPublicacao);
-router.delete('/:id', excluirPublicacao);
+router.put('/:id', checkRole(ROLES_PUBLICADORES), editarPublicacao);
+router.delete('/:id', checkRole(ROLES_PUBLICADORES), excluirPublicacao);
 
 module.exports = router;
