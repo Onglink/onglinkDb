@@ -167,22 +167,42 @@
 
 //novo usuarioController
 const Usuario = require('../models/usuarioModel');
-const bcrypt = require('bcrypt'); // Importe o bcrypt
-const jwt = require('jsonwebtoken'); // Importe o jsonwebtoken
+const bcrypt = require('bcrypt'); 
+const jwt = require('jsonwebtoken'); 
 
-// --- CADASTRO ---
+// --- CADASTRO (CORRIGIDO COM HASH) ---
 const cadastrarUsuario = async (req, res) => {
     try {
-        // (O seu código de cadastro já estava bom, mas precisa do hash de senha)
-        // Assumindo que seu 'usuarioModel' já faz o hash da senha automaticamente
-        // usando um 'pre-save' hook. Se não, você precisa fazer o hash aqui.
-        const novoUsuario = new Usuario(req.body);
+        // 1. Desestrutura os dados do corpo da requisição
+        const { nome, cpf, email, senha, status } = req.body;
+
+        // 2. Validação básica
+        if (!senha) {
+            return res.status(400).json({ error: 'A senha é obrigatória.' });
+        }
+
+        // 3. Criptografar a senha (HASH)
+        const salt = await bcrypt.genSalt(10);
+        const senhaHasheada = await bcrypt.hash(senha, salt);
+
+        // 4. Criar o usuário com a senha criptografada
+        // IMPORTANTE: Não passamos o req.body direto para garantir que usaremos a senhaHasheada
+        const novoUsuario = new Usuario({
+            nome,
+            cpf,
+            email,
+            status, // Se não vier, o model usa o default 'user'
+            senha: senhaHasheada 
+        });
+
+        // 5. Salvar no banco
         await novoUsuario.save();
 
         res.status(201).json({
             message: 'Usuário cadastrado com sucesso!',
             id: novoUsuario._id
         });
+
     } catch (err) {
         if (err.code === 11000) {
             return res.status(400).json({
@@ -197,7 +217,7 @@ const cadastrarUsuario = async (req, res) => {
     }
 };
 
-// --- LOGIN (Corrigido para usar Bcrypt e JWT) ---
+// --- LOGIN ---
 const loginUsuario = async (req, res) => {
     try {
         const { email, senha } = req.body;
@@ -206,45 +226,32 @@ const loginUsuario = async (req, res) => {
             return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
         }
 
-        // 1. Busca o usuário e inclui a senha (+senha)
+        // Busca usuário e TRAZ a senha (que está oculta por padrão)
         const usuario = await Usuario.findOne({ email }).select('+senha');
 
         if (!usuario) {
             return res.status(401).json({ error: 'Email ou senha inválidos.' });
         }
 
-        // teste:
-        // Vamos verificar se a senha realmente veio do banco
-if (!usuario.senha) {
-    console.error("ERRO GRAVE: O campo 'senha' não foi retornado do banco de dados.");
-    // Se a senha não veio, o bcrypt.compare vai quebrar.
-    // Retornamos um 500 para sabermos que o problema é o .select('+senha')
-    return res.status(500).json({ 
-        error: 'Falha no servidor: não foi possível validar a senha.' 
-    });
-}
-
-        // 2. Compara a senha enviada com a senha HASHED do banco
+        // Compara a senha enviada com o HASH do banco
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
         if (!senhaValida) {
             return res.status(401).json({ error: 'Email ou senha inválidos.' });
         }
 
-        // 3. Gera o Token JWT
+        // Gera Token JWT
         const token = jwt.sign(
-            { id: usuario._id, email: usuario.email, role: usuario.status }, // Dados que vão no token
-            process.env.JWT_SECRET, // Sua chave secreta (do .env)
-            { expiresIn: '8h' } // Tempo de expiração
+            { id: usuario._id, email: usuario.email, role: usuario.status },
+            process.env.JWT_SECRET,
+            { expiresIn: '8h' }
         );
 
-        // 4. Login bem-sucedido! Retorna o Token e os dados
         usuario.senha = undefined; // Remove a senha da resposta
 
-        // RESPOSTA 200 OK (Isso corrige o 204)
         res.status(200).json({
             message: 'Login realizado com sucesso!',
-            token: token, // Envia o token para o frontend
+            token: token,
             usuario: usuario 
         });
 
@@ -260,10 +267,7 @@ const listarUsuarios = async (req, res) => {
         const lista = await Usuario.find({}).select('-senha');
         res.status(200).json(lista);
     } catch (err) {
-        res.status(500).json({
-            error: 'Erro ao listar usuários.',
-            details: err.message || err
-        });
+        res.status(500).json({ error: 'Erro ao listar usuários.', details: err.message });
     }
 };
 
@@ -273,17 +277,13 @@ const buscarUsuarioPorId = async (req, res) => {
         const { id } = req.params;
         const usuario = await Usuario.findById(id).select('-senha');
 
-        if (!usuario) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
-        }
-        res.status(200).json({ usuario }); // Ajustei para enviar o objeto
+        if (!usuario) return res.status(404).json({ error: 'Usuário não encontrado.' });
+        
+        res.status(200).json({ usuario });
     } catch (err) {
-        res.status(500).json({
-            error: 'Erro ao bucar o usuário.',
-            details: err.message || err
-        });
+        res.status(500).json({ error: 'Erro ao buscar o usuário.', details: err.message });
     }
-}
+};
 
 // --- ATUALIZAR ---
 const atualizarUsuario = async (req, res) => {
@@ -291,8 +291,10 @@ const atualizarUsuario = async (req, res) => {
         const { id } = req.params;
         const dadosAtualizados = req.body;
 
-        // (Se a senha for atualizada, ela precisa ser "hashed" novamente)
-        // (O ideal é ter uma rota separada /atualizar-senha)
+        // Segurança: impede a atualização de senha por esta rota para não quebrar o hash
+        if (dadosAtualizados.senha) {
+            delete dadosAtualizados.senha;
+        }
 
         const resultado = await Usuario.findByIdAndUpdate(
             id,
@@ -300,19 +302,11 @@ const atualizarUsuario = async (req, res) => {
             { new: true, runValidators: true }
         ).select('-senha');
 
-        if (!resultado) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
-        }
+        if (!resultado) return res.status(404).json({ error: 'Usuário não encontrado.' });
 
-        res.status(200).json({
-            message: 'Usuário atualizado com sucesso!',
-            usuario: resultado
-        });
+        res.status(200).json({ message: 'Usuário atualizado!', usuario: resultado });
     } catch (err) {
-        res.status(400).json({
-            error: 'Erro ao atualizar usuário.',
-            details: err.message || err
-        });
+        res.status(400).json({ error: 'Erro ao atualizar usuário.', details: err.message });
     }
 };
 
@@ -322,23 +316,14 @@ const deletarUsuario = async (req, res) => {
         const { id } = req.params;
         const resultado = await Usuario.findByIdAndDelete(id);
 
-        if (!resultado) {
-            return res.status(404).json({ error: 'Usuário não encontrado.' });
-        }
+        if (!resultado) return res.status(404).json({ error: 'Usuário não encontrado.' });
 
-        res.status(200).json({
-            message: 'Usuário deletado com sucesso!',
-            deleted: true
-        });
+        res.status(200).json({ message: 'Usuário deletado!', deleted: true });
     } catch (err) {
-        res.status(500).json({
-            error: 'Erro ao deletar usuário.',
-            details: err.message || err
-        });
+        res.status(500).json({ error: 'Erro ao deletar usuário.', details: err.message });
     }
 };
 
-// Exporta todas as funções
 module.exports = {
     cadastrarUsuario,
     listarUsuarios,
