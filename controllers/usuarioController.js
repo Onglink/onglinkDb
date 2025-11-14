@@ -213,6 +213,17 @@ const loginUsuario = async (req, res) => {
             return res.status(401).json({ error: 'Email ou senha inválidos.' });
         }
 
+        // teste:
+        // Vamos verificar se a senha realmente veio do banco
+if (!usuario.senha) {
+    console.error("ERRO GRAVE: O campo 'senha' não foi retornado do banco de dados.");
+    // Se a senha não veio, o bcrypt.compare vai quebrar.
+    // Retornamos um 500 para sabermos que o problema é o .select('+senha')
+    return res.status(500).json({ 
+        error: 'Falha no servidor: não foi possível validar a senha.' 
+    });
+}
+
         // 2. Compara a senha enviada com a senha HASHED do banco
         const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
